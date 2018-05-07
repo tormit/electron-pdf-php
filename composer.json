@@ -1,0 +1,21 @@
+{
+    "name": "silvioiannone/electron-pdf-php",
+    "description": "A PHP wrapper for electron-pdf",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Silvio Iannone",
+            "email": "silvio@bloom.se"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SI\\ElectronPdfPhp\\": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/process": "^4.0"
+    }
+}
