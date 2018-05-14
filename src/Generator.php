@@ -51,7 +51,10 @@ class Generator
      *                         'electron-pdf'.
      *         'proxyWithNode' => (bool). Execute the command using node. This may be necessary in
      *                            some cases where the error env: node: command not found` is
-     *                            thrown.
+     *                            thrown. Default: false.
+     *         'graphicalEnvironment' => (bool) Whether the server has a graphical environment. This
+     *                                   is only valid on Linux machines that have Xvfb installed.
+     *                                   Default: false.
      *     ]
      *
      * @param array $settings Instance settings.
@@ -60,7 +63,8 @@ class Generator
     {
         $defaultSettings = [
             'executable' => 'electron-pdf',
-            'proxyWithNode' => false
+            'proxyWithNode' => false,
+            'graphicalEnvironment' => false
         ];
 
         $this->settings = array_merge($defaultSettings, $settings);
@@ -114,6 +118,7 @@ class Generator
     {
         // Set the `to` to a temporary file.
         $this->to = $this->makeTemporaryFile();
+        file_put_contents($this->to, 'test');
 
         $this->generate();
 
@@ -140,7 +145,6 @@ class Generator
         }
 
         $this->run();
-        $this->clean();
     }
 
     /**
@@ -151,12 +155,27 @@ class Generator
      */
     protected function run(): void
     {
+        if (! $this->settings['graphicalEnvironment']) {
+            $this->prepareVirtualFrameBuffer();
+        }
+
         $process = $this->createProcess();
         try {
             $process->mustRun();
         } catch (ProcessFailedException $exception) {
             throw new GenerationFailed($this->from, $this->to, $process);
         }
+    }
+
+    /**
+     * Prepare the virtual frame buffer for environments without graphical environment.
+     *
+     * @return void
+     */
+    protected function prepareVirtualFrameBuffer(): void
+    {
+        (new Process('export DISPLAY=\':99.0\''))->mustRun();
+        (new Process('Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &'))->mustRun();
     }
 
     /**
@@ -175,6 +194,13 @@ class Generator
         // If we need to proxy with node we just need to prepend the $command with `node`.
         if ($this->settings['proxyWithNode']) {
             array_unshift($command, 'node');
+        }
+
+        // If there's no graphical environment we need to prepend the $command with `xvfb-run -n 9`.
+        if (! $this->settings['graphicalEnvironment']) {
+            array_unshift($command, '9');
+            array_unshift($command, '-n');
+            array_unshift($command, 'xvfb-run');
         }
 
         return new Process($command);
