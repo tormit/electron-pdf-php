@@ -1,5 +1,3 @@
-#electron-pdf-php
-
 ## Introduction
 
 **electron-pdf-php** is a PHP wrapper of [electron-pdf](https://github.com/fraserxu/electron-pdf).
