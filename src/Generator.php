@@ -160,6 +160,7 @@ class Generator
         }
 
         $process = $this->createProcess();
+
         try {
             $process->mustRun();
         } catch (ProcessFailedException $exception) {
@@ -196,10 +197,10 @@ class Generator
             array_unshift($command, 'node');
         }
 
-        // If there's no graphical environment we need to prepend the $command with `xvfb-run -n 9`.
+        // If there's no graphical environment we need to prepend the $command with `xvfb-run
+        // --auto-servernum`.
         if (! $this->settings['graphicalEnvironment']) {
-            array_unshift($command, '9');
-            array_unshift($command, '-n');
+            array_unshift($command, '--auto-servernum');
             array_unshift($command, 'xvfb-run');
         }
 
