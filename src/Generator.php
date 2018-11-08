@@ -144,7 +144,22 @@ class Generator
             $this->prepareGenerationFromHtml();
         }
 
+        $this->createDestination();
         $this->run();
+    }
+
+    /**
+     * Create the destination folder.
+     *
+     * @return void
+     */
+    protected function createDestination(): void
+    {
+        $directory = \dirname($this->to);
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
     }
 
     /**
