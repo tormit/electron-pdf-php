@@ -13,6 +13,10 @@ use Symfony\Component\Process\Process;
  */
 class Generator
 {
+    public const MARGIN_TYPE_DEFAULT_MARGINS = 0;
+    public const MARGIN_TYPE_NO_MARGINS = 1;
+    public const MARGIN_TYPE_MINIMUM_MARGINS = 2;
+
     /**
      * PDF source location.
      *
@@ -47,14 +51,18 @@ class Generator
      * Settings:
      *
      *     [
-     *         'executable' => (string). Path to the electron-pdf executable. Default:
+     *         'executable' => (string) Path to the electron-pdf executable. Default:
      *                         'electron-pdf'.
-     *         'proxyWithNode' => (bool). Execute the command using node. This may be necessary in
+     *         'proxyWithNode' => (bool) Execute the command using node. This may be necessary in
      *                            some cases where the error env: node: command not found` is
      *                            thrown. Default: false.
      *         'graphicalEnvironment' => (bool) Whether the server has a graphical environment. This
      *                                   is only valid on Linux machines that have Xvfb installed.
      *                                   Default: false.
+     *         'marginsType' => (int) Specify the type of margins to use:
+     *                          0 - default margins
+     *                          1 - no margins (electron-pdf default setting)
+     *                          2 - minimum margins
      *     ]
      *
      * @param array $settings Instance settings.
@@ -64,7 +72,8 @@ class Generator
         $defaultSettings = [
             'executable' => 'electron-pdf',
             'proxyWithNode' => false,
-            'graphicalEnvironment' => false
+            'graphicalEnvironment' => false,
+            'marginsType' => self::MARGIN_TYPE_NO_MARGINS
         ];
 
         $this->settings = array_merge($defaultSettings, $settings);
@@ -202,10 +211,16 @@ class Generator
     protected function createProcess(): Process
     {
         $command = [
-            $this->settings['executable'],
-            $this->from,
-            $this->to
+            $this->settings['executable']
         ];
+
+        $command[] = $this->from;
+        $command[] = $this->to;
+
+        // Set the margins if needed.
+        if ($this->settings['marginsType'] !== self::MARGIN_TYPE_NO_MARGINS) {
+            $command[] = '--marginsType=' . $this->settings['marginsType'];
+        }
 
         // If we need to proxy with node we just need to prepend the $command with `node`.
         if ($this->settings['proxyWithNode']) {

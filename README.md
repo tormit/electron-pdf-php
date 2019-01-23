@@ -30,12 +30,16 @@ Usage is super easy:
 
 When instantiating a new generator instance the following settings may be passed to the constructor:
 
-- `executable` => (string). Path to the electron-pdf executable. Default: 'electron-pdf'
-- `proxyWithNode` => (bool). Execute the command using node. This may be necessary in some cases 
+- `executable` => `string` - Path to the electron-pdf executable. Default: 'electron-pdf'
+- `proxyWithNode` => `bool` - Execute the command using node. This may be necessary in some cases 
    where the error `env: node: command not found` is thrown. Default: false
-- `graphicalEnvironment` => (bool) Whether the server has a graphical environment. This is only
+- `graphicalEnvironment` => `bool` - Whether the server has a graphical environment. This is only
    valid on Linux machines that have 
    [Xvfb](https://www.x.org/archive/X11R7.6/doc/man/man1/Xvfb.1.xhtml) installed. Default: false
+- `marginsType` => `int` - Specify the type of margins to use:
+    - `0`: default margins
+    - `1`: no margins (electron-pdf default setting)
+    - `2`: minimum margins
 
 Example:
 
