@@ -16,6 +16,6 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "symfony/process": "^4.0|^5.2"
+        "symfony/process": "^5.2"
     }
 }

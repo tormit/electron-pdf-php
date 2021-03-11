@@ -199,8 +199,8 @@ class Generator
      */
     protected function prepareVirtualFrameBuffer(): void
     {
-        (new Process('export DISPLAY=\':99.0\''))->mustRun();
-        (new Process('Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &'))->mustRun();
+        Process::fromShellCommandline('export DISPLAY=\':99.0\'')->mustRun();
+        Process::fromShellCommandline('Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &')->mustRun();
     }
 
     /**
@@ -273,6 +273,6 @@ class Generator
     protected function makeTemporaryFile(): string
     {
         return DIRECTORY_SEPARATOR . trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) .
-            DIRECTORY_SEPARATOR . ltrim(uniqid('epp', true), DIRECTORY_SEPARATOR);
+               DIRECTORY_SEPARATOR . ltrim(uniqid('epp', true), DIRECTORY_SEPARATOR) . '.html';
     }
 }
